@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AquaEye — ¿Cuánto le cuestan las malas decisiones a su salmonera?</title>
+<meta name="description" content="AquaEye junta los números de cultivo, sanidad, planta y ventas en una sola pantalla y le dice qué decisión mueve más plata.">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --ink: #0f2233;
+    --muted: #5b7186;
+    --teal: #0a8f6c;
+    --teal-dark: #067a5b;
+    --bg: #ffffff;
+    --soft: #f4f8f7;
+    --line: #e3ecea;
+    --red: #c0392b;
+  }
+  body {
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    line-height: 1.65;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 0 24px; }
+
+  /* NAV */
+  nav {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 18px 24px; max-width: 980px; margin: 0 auto;
+  }
+  .brand { font-weight: 800; font-size: 18px; letter-spacing: 0.5px; color: var(--ink); text-decoration: none; }
+  .brand span { color: var(--teal); }
+  .nav-cta {
+    background: var(--teal); color: #fff; text-decoration: none;
+    padding: 10px 20px; border-radius: 8px; font-weight: 600; font-size: 14px;
+  }
+  .nav-cta:hover { background: var(--teal-dark); }
+
+  /* HERO */
+  .hero { padding: 72px 0 56px; text-align: center; }
+  .eyebrow {
+    display: inline-block; background: var(--soft); border: 1px solid var(--line);
+    color: var(--teal-dark); font-size: 13px; font-weight: 700;
+    padding: 6px 14px; border-radius: 999px; margin-bottom: 24px;
+  }
+  h1 { font-size: clamp(30px, 5vw, 48px); line-height: 1.15; font-weight: 800; letter-spacing: -0.5px; }
+  h1 em { font-style: normal; color: var(--teal); }
+  .hero p { max-width: 620px; margin: 20px auto 0; font-size: 18px; color: var(--muted); }
+  .hero-btns { margin-top: 32px; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--teal); color: #fff; text-decoration: none;
+    padding: 14px 28px; border-radius: 10px; font-weight: 700; font-size: 16px;
+  }
+  .btn-primary:hover { background: var(--teal-dark); }
+  .btn-secondary {
+    background: #fff; color: var(--ink); text-decoration: none;
+    padding: 14px 28px; border-radius: 10px; font-weight: 600; font-size: 16px;
+    border: 1px solid var(--line);
+  }
+  .btn-secondary:hover { border-color: var(--teal); color: var(--teal-dark); }
+  .hero-note { margin-top: 16px; font-size: 13px; color: var(--muted); }
+
+  /* MONEY CARDS */
+  section { padding: 64px 0; }
+  .section-label { color: var(--teal); font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 10px; }
+  h2 { font-size: clamp(24px, 3.5vw, 34px); line-height: 1.2; font-weight: 800; letter-spacing: -0.3px; margin-bottom: 14px; }
+  .section-sub { color: var(--muted); font-size: 17px; max-width: 640px; margin-bottom: 36px; }
+
+  .money-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; }
+  .money-card {
+    border: 1px solid var(--line); border-radius: 14px; padding: 26px;
+    background: #fff;
+  }
+  .money-card .amount { font-size: 34px; font-weight: 800; color: var(--red); letter-spacing: -1px; }
+  .money-card .what { font-weight: 700; margin: 8px 0 6px; font-size: 16px; }
+  .money-card .why { color: var(--muted); font-size: 14.5px; }
+  .footnote { margin-top: 18px; font-size: 12.5px; color: var(--muted); }
+
+  /* STEPS */
+  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; }
+  .step {
+    background: var(--soft); border-radius: 14px; padding: 28px;
+  }
+  .step .num {
+    width: 36px; height: 36px; border-radius: 50%; background: var(--teal); color: #fff;
+    display: flex; align-items: center; justify-content: center; font-weight: 800; margin-bottom: 16px;
+  }
+  .step h3 { font-size: 18px; margin-bottom: 8px; }
+  .step p { color: var(--muted); font-size: 15px; }
+
+  /* LEVERS */
+  .lever-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+  .lever {
+    border: 1px solid var(--line); border-radius: 12px; padding: 20px 22px;
+    display: flex; gap: 14px; align-items: flex-start; background: #fff;
+  }
+  .lever .icon { font-size: 24px; line-height: 1; }
+  .lever h4 { font-size: 15.5px; margin-bottom: 4px; }
+  .lever p { color: var(--muted); font-size: 14px; }
+
+  /* DEMO BAND */
+  .demo-band {
+    background: var(--ink); color: #fff; border-radius: 20px;
+    padding: 52px 40px; text-align: center;
+  }
+  .demo-band h2 { color: #fff; }
+  .demo-band p { color: #b9c9d4; max-width: 560px; margin: 0 auto 28px; font-size: 16.5px; }
+  .demo-band .btn-primary { font-size: 17px; padding: 16px 34px; }
+  .demo-band .ticks { margin-top: 20px; font-size: 13.5px; color: #8fa8b8; }
+  .demo-band .ticks span { margin: 0 10px; }
+
+  /* PROCESS */
+  .timeline { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; }
+  .week { border-left: 3px solid var(--teal); padding: 6px 0 6px 18px; }
+  .week .wk { color: var(--teal); font-weight: 800; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
+  .week h4 { margin: 6px 0; font-size: 16.5px; }
+  .week p { color: var(--muted); font-size: 14.5px; }
+
+  /* CONTACT */
+  .contact { text-align: center; padding: 72px 0 80px; }
+  .contact h2 { margin-bottom: 12px; }
+  .contact p { color: var(--muted); max-width: 520px; margin: 0 auto 28px; font-size: 17px; }
+
+  footer {
+    border-top: 1px solid var(--line); padding: 26px 24px; text-align: center;
+    color: var(--muted); font-size: 13px;
+  }
+  footer a { color: var(--teal-dark); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="brand" href="#">AQUA<span>EYE</span></a>
+  <a class="nav-cta" href="mailto:carlosvergarachile@gmail.com?subject=Quiero%20ver%20AquaEye%20con%20mis%20datos">Agendar reunión</a>
+</nav>
+
+<header class="hero wrap">
+  <div class="eyebrow">Para gerentes y dueños de la industria salmonera</div>
+  <h1>Sus datos ya existen.<br>Lo que falta es saber <em>qué decisión mueve más plata.</em></h1>
+  <p>AquaEye junta los números de cultivo, alimento, sanidad, planta y ventas en una sola pantalla — y le muestra, en millones de pesos, dónde conviene actuar primero.</p>
+  <div class="hero-btns">
+    <a class="btn-primary" href="ui/index.html">▶ Ver la demo (5 minutos)</a>
+    <a class="btn-secondary" href="mailto:carlosvergarachile@gmail.com?subject=Quiero%20ver%20AquaEye%20con%20mis%20datos">Agendar reunión</a>
+  </div>
+  <div class="hero-note">Sin instalación · Sin registro · Corre en el navegador</div>
+</header>
+
+<section class="wrap" id="problema">
+  <div class="section-label">El problema</div>
+  <h2>Pequeñas desviaciones operativas cuestan millones</h2>
+  <p class="section-sub">En una empresa que cosecha 10.000 toneladas al año, estas son las fugas típicas que nadie ve a tiempo porque cada área mira solo su propio número:</p>
+  <div class="money-grid">
+    <div class="money-card">
+      <div class="amount">US$ 1,5 M</div>
+      <div class="what">0,1 puntos extra de FCR</div>
+      <div class="why">Si los peces convierten apenas un poco peor el alimento, la empresa compra cientos de toneladas de alimento de más al año.</div>
+    </div>
+    <div class="money-card">
+      <div class="amount">US$ 0,5 M</div>
+      <div class="what">1% más de mortalidad</div>
+      <div class="why">Cada punto de mortalidad es biomasa que ya costó alimento, vacunas y meses de cultivo — y nunca se vende.</div>
+    </div>
+    <div class="money-card">
+      <div class="amount">US$ 0,4 M</div>
+      <div class="what">1 tratamiento de calígus extra por centro</div>
+      <div class="why">Cada baño o tratamiento adicional suma costo directo, estrés a los peces y días de crecimiento perdidos.</div>
+    </div>
+  </div>
+  <p class="footnote">Cifras de referencia para una empresa salmonera chilena de 10.000 toneladas anuales de cosecha. En la demo puede mover estos supuestos con sus propios números.</p>
+</section>
+
+<section class="wrap" id="que-hace" style="background:var(--soft); border-radius:20px; padding-left:32px; padding-right:32px;">
+  <div class="section-label">Qué hace AquaEye</div>
+  <h2>Tres pasos, en lenguaje de negocio</h2>
+  <p class="section-sub">No es otro sistema de reportes. Es una sala de decisión que responde una sola pregunta: ¿dónde pongo mi esfuerzo este mes?</p>
+  <div class="steps">
+    <div class="step">
+      <div class="num">1</div>
+      <h3>Conecta sus 6 variables</h3>
+      <p>FCR, mortalidad, calígus, rendimiento de planta, precio de venta y dólar — hoy dispersas en planillas y áreas que no se hablan.</p>
+    </div>
+    <div class="step">
+      <div class="num">2</div>
+      <h3>Compara escenarios en segundos</h3>
+      <p>¿Y si sube el alimento 5%? ¿Y si el calígus exige un tratamiento más? Mueva un control y vea el efecto en el resultado anual.</p>
+    </div>
+    <div class="step">
+      <div class="num">3</div>
+      <h3>Prioriza por plata, no por intuición</h3>
+      <p>Un ranking simple le dice cuál palanca mueve más millones, y genera un reporte listo para llevar al directorio.</p>
+    </div>
+  </div>
+</section>
+
+<section class="wrap" id="palancas">
+  <div class="section-label">Las 6 palancas</div>
+  <h2>Todo lo que mueve su resultado, en una pantalla</h2>
+  <p class="section-sub">Cada palanca está explicada en palabras simples. Sin fórmulas a la vista — aunque cada cálculo es auditable si su equipo lo quiere revisar.</p>
+  <div class="lever-grid">
+    <div class="lever"><div class="icon">🐟</div><div><h4>Cuánto come el pez (FCR)</h4><p>La conversión de alimento es el mayor costo de la industria. Un decimal aquí vale millones.</p></div></div>
+    <div class="lever"><div class="icon">📉</div><div><h4>Cuántos peces mueren</h4><p>La mortalidad destruye biomasa ya pagada. Detectar su costo real cambia las prioridades sanitarias.</p></div></div>
+    <div class="lever"><div class="icon">🦠</div><div><h4>Calígus y tratamientos</h4><p>Cada tratamiento cuesta plata y crecimiento. Saber cuánto, ayuda a decidir cuándo intervenir.</p></div></div>
+    <div class="lever"><div class="icon">🏭</div><div><h4>Cuánto filete sale de cada pez</h4><p>El rendimiento de planta convierte el mismo pescado en más o menos producto vendible.</p></div></div>
+    <div class="lever"><div class="icon">💵</div><div><h4>A cuánto vende</h4><p>Precio y mezcla de mercados definen el ingreso. Comparar escenarios evita sorpresas.</p></div></div>
+    <div class="lever"><div class="icon">💱</div><div><h4>El dólar</h4><p>Costos en pesos, ventas en dólares: el tipo de cambio puede borrar o duplicar un esfuerzo operativo.</p></div></div>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="demo-band">
+    <h2>Pruébelo ahora, con datos de ejemplo</h2>
+    <p>La demo interactiva carga los números típicos de una empresa de 10.000 toneladas. Mueva los controles y vea cómo cambia el resultado anual en tiempo real.</p>
+    <a class="btn-primary" href="ui/index.html">▶ Abrir la demo de AquaEye</a>
+    <div class="ticks"><span>✓ Sin instalar nada</span><span>✓ Sin registro</span><span>✓ Luego se calibra con sus datos</span></div>
+  </div>
+</section>
+
+<section class="wrap" id="proceso">
+  <div class="section-label">Cómo trabajamos</div>
+  <h2>De la demo a su cockpit en 3 semanas</h2>
+  <p class="section-sub">No vendemos software por catálogo. Calibrado con sus números, AquaEye se convierte en la sala de decisión de su empresa.</p>
+  <div class="timeline">
+    <div class="week">
+      <div class="wk">Semana 1</div>
+      <h4>Reunión + sus datos</h4>
+      <p>Conversamos con su equipo y recibimos sus cifras en una planilla simple (le entregamos la plantilla).</p>
+    </div>
+    <div class="week">
+      <div class="wk">Semana 2</div>
+      <h4>Calibración</h4>
+      <p>Ajustamos el modelo a su realidad: sus centros, sus costos, sus precios. Todo supuesto queda visible y documentado.</p>
+    </div>
+    <div class="week">
+      <div class="wk">Semana 3</div>
+      <h4>Su cockpit, con sus números</h4>
+      <p>Recibe su versión de AquaEye funcionando en el navegador, lista para la reunión de gerencia o directorio.</p>
+    </div>
+  </div>
+</section>
+
+<section class="contact wrap" id="contacto">
+  <h2>¿Vemos cuánto le cuestan sus desviaciones?</h2>
+  <p>Escríbanos y agendamos una conversación de 30 minutos. Si tiene sus números a mano, salimos de esa reunión con una primera lectura de su caso.</p>
+  <a class="btn-primary" href="mailto:carlosvergarachile@gmail.com?subject=Quiero%20ver%20AquaEye%20con%20mis%20datos">Agendar reunión →</a>
+</section>
+
+<footer>
+  AquaEye — Ingeniería de Gestión SpA · <a href="https://ingenieriadegestion.cl">ingenieriadegestion.cl</a> · <a href="mailto:carlosvergarachile@gmail.com">carlosvergarachile@gmail.com</a>
+</footer>
+
+</body>
+</html>
