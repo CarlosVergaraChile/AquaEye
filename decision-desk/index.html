@@ -28,12 +28,12 @@ pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#eef5f5;padding:16px;
 <div class="inputs"><label>Mínimo<input type="number" min="0" step="any" class="bLow" value="10000"></label><label>Base<input type="number" min="0" step="any" class="bBase" value="25000"></label><label>Máximo<input type="number" min="0" step="any" class="bHigh" value="50000"></label></div>
 <h3 style="margin-top:18px">Costo total de intervenir</h3><div class="inputs"><label>Mínimo<input type="number" min="0" step="any" class="cLow" value="9000"></label><label>Base<input type="number" min="0" step="any" class="cBase" value="16000"></label><label>Máximo<input type="number" min="0" step="any" class="cHigh" value="30000"></label></div>
 <label style="margin-top:13px">Fuentes y calidad de evidencia<textarea class="evidence">EJEMPLO FICTICIO: estimaciones no verificadas.</textarea></label>
-<label style="margin-top:13px">Supuestos y condiciones<textarea class="assumptions">Beneficio y costo incrementales referidos a 12 meses; no probado en producción.</textarea></label></section>
+<label style="margin-top:13px">Supuestos y condiciones<textarea class="assumptions">Beneficio y costo incrementales referidos a 12 meses; no probado en producción.</textarea></label><h3 style="margin-top:17px">Resultado observado (opcional, al finalizar)</h3><div class="inputs"><label>Beneficio real<input type="number" min="0" step="any" class="actualBenefit" placeholder="Sin medir"></label><label>Costo real<input type="number" min="0" step="any" class="actualCost" placeholder="Sin medir"></label></div><label style="margin-top:12px">Fuente del resultado real<input class="actualSource" placeholder="Acta o reporte, sin datos sensibles" maxlength="300"></label></section>
 <section class="case" data-i="1"><h2>3. Alternativa B</h2><div class="inputs" style="grid-template-columns:1fr"><label>Intervención<input class="name" value="Servicio externo (ficticio)" maxlength="160"></label></div><h3>Beneficios incrementales estimados</h3>
 <div class="inputs"><label>Mínimo<input type="number" min="0" step="any" class="bLow" value="2000"></label><label>Base<input type="number" min="0" step="any" class="bBase" value="28000"></label><label>Máximo<input type="number" min="0" step="any" class="bHigh" value="65000"></label></div>
 <h3 style="margin-top:18px">Costo total de intervenir</h3><div class="inputs"><label>Mínimo<input type="number" min="0" step="any" class="cLow" value="11000"></label><label>Base<input type="number" min="0" step="any" class="cBase" value="23000"></label><label>Máximo<input type="number" min="0" step="any" class="cHigh" value="38000"></label></div>
 <label style="margin-top:13px">Fuentes y calidad de evidencia<textarea class="evidence">EJEMPLO FICTICIO: oferta simulada, no una cotización real.</textarea></label>
-<label style="margin-top:13px">Supuestos y condiciones<textarea class="assumptions">No existe evaluación sanitaria ni estimación del impacto animal.</textarea></label></section></div>
+<label style="margin-top:13px">Supuestos y condiciones<textarea class="assumptions">No existe evaluación sanitaria ni estimación del impacto animal.</textarea></label><h3 style="margin-top:17px">Resultado observado (opcional, al finalizar)</h3><div class="inputs"><label>Beneficio real<input type="number" min="0" step="any" class="actualBenefit" placeholder="Sin medir"></label><label>Costo real<input type="number" min="0" step="any" class="actualCost" placeholder="Sin medir"></label></div><label style="margin-top:12px">Fuente del resultado real<input class="actualSource" placeholder="Acta o reporte, sin datos sensibles" maxlength="300"></label></section></div>
 <section><button id="evaluate">Comparar alternativas</button><button id="csv" class="secondary">Exportar comparación CSV</button><button id="report" class="secondary">Descargar ficha de decisión TXT</button>
 <p id="error" role="alert"></p></section>
 <section><h2>4. Resultados: rangos, no predicciones</h2><div id="results" class="row"></div><p class="note">El escenario conservador usa beneficio mínimo menos costo máximo. El escenario optimista usa beneficio máximo menos costo mínimo. No son percentiles ni probabilidades.</p></section>
@@ -48,10 +48,13 @@ function money(x,currency){return new Intl.NumberFormat("es-CL",{style:"currency
 function item(el){
  const get=(c)=>$$("#"+c,el);
  const value=(c)=>{const field=$$("."+c,el);if(field.value.trim()==="")throw new Error("Completa todos los montos");return Number(field.value)};
- return {name:$$(".name",el).value,horizon:$$("#horizon").value,currency:$$("#currency").value,
+ const b=$(".actualBenefit",el).value.trim(),c=$(".actualCost",el).value.trim(),source=$(".actualSource",el).value.trim();
+ if((b||c||source)&&(!b||!c||!source))throw new Error("Para registrar resultados observados se requieren beneficio, costo y fuente.");
+ return {name:$(".name",el).value,horizon:$("#horizon").value,currency:$("#currency").value,
  benefits:{low:value("bLow"),base:value("bBase"),high:value("bHigh")},
  costs:{low:value("cLow"),base:value("cBase"),high:value("cHigh")},
- evidence:$$(".evidence",el).value,assumptions:$$(".assumptions",el).value};
+ evidence:$(".evidence",el).value,assumptions:$(".assumptions",el).value,
+ actual:b?{benefit:Number(b),cost:Number(c),source}:undefined};
 }
 function render(){
  try{
@@ -66,7 +69,7 @@ function render(){
     const strong=document.createElement("strong");strong.textContent=money(n,d.currency);
     const small=document.createElement("small");small.textContent=label;box.append(strong,small);metrics.append(box);
    }
-   c.append(metrics);const p=document.createElement("p");p.textContent="Lectura: "+d.classification.replaceAll("_"," ").toLowerCase()+". Beneficio necesario para cubrir costo base: "+money(d.breakEvenBenefit,d.currency);c.append(p);output.append(c);
+   c.append(metrics);if(d.outcome){const observed=document.createElement("p");observed.textContent="Neto observado: "+money(d.outcome.net,d.currency)+" · desviación descriptiva frente al escenario base: "+money(d.outcome.varianceVsBase,d.currency);c.append(observed)}const p=document.createElement("p");p.textContent="Lectura: "+d.classification.replaceAll("_"," ").toLowerCase()+". Beneficio necesario para cubrir costo base: "+money(d.breakEvenBenefit,d.currency);c.append(p);output.append(c);
    details.push(d.name+" | Fuente: "+(d.evidence||"NO INFORMADA")+"\nSupuestos: "+(d.assumptions||"NO INFORMADOS")+
    "\nNeto conservador / base / optimista: "+[d.net.conservative,d.net.base,d.net.optimistic].map(v=>money(v,d.currency)).join(" / ")+"\n");
   }
