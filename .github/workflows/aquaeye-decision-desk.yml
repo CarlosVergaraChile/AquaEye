@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - aquaeye-decision-desk-v03
+      - aquaeye-piloto-comercial-chile-v04
     paths:
       - "decision-desk/**"
       - "tests/**"
@@ -24,10 +25,11 @@ jobs:
         with:
           node-version: "22"
       - name: Validate model
-        run: node --test tests/decision-desk.test.mjs
+        run: node --test tests/decision-desk.test.mjs tests/import-csv.test.mjs
       - name: Validate JavaScript syntax
         run: |
           node --check decision-desk/model.js
+          node --check decision-desk/import-csv.js
           python3 - <<'PY'
           import pathlib,re
           p=pathlib.Path("decision-desk/index.html")
@@ -36,7 +38,7 @@ jobs:
           assert match, "missing interactive module script"
           pathlib.Path("/tmp/aquaeye-ui.mjs").write_text(match.group(1))
           assert (p.parent/"model.js").exists()
-          assert 'DATOS' not in html or True
+          assert (p.parent/"import-csv.js").exists()
           PY
           node --check /tmp/aquaeye-ui.mjs
       - name: Verify demo remains standalone
