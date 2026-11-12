@@ -8,7 +8,7 @@ test("La plantilla contiene dos alternativas válidas, sin datos de empresa",()=
  assert.equal(out.decisions[0].net.base,9000);
 });
 test("Acepta comillas y delimitador punto y coma",()=>{
- const csv=decisionTemplateCSV().replace('Intervención A (EJEMPLO)','Intervención; "A"');
+ const csv=decisionTemplateCSV().replace('Intervención A (EJEMPLO)','Intervención; ""A""');
  const out=importDecisionCSV(csv);
  assert.equal(out.decisions[0].name,'Intervención; "A"');
 });
