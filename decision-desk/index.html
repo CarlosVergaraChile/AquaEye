@@ -1,0 +1,87 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>AquaEye · Decision Desk | Demo</title><style>
+:root{font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;color:#172f40;background:#f2f6f6}
+*{box-sizing:border-box}body{margin:0}header{background:#143c48;color:#fff;padding:42px max(22px,calc((100vw - 1180px)/2))}
+header h1{font-size:clamp(30px,4vw,47px);margin:7px 0;letter-spacing:-1px}header p{color:#cfdee2;max-width:760px}
+.kicker{color:#bfe4cf;font-size:12px;text-transform:uppercase;letter-spacing:.18em;font-weight:800}
+main{max-width:1220px;margin:auto;padding:24px}section{background:#fff;border:1px solid #dbe7e7;border-radius:14px;padding:23px;margin-bottom:18px}
+h2{margin:0 0 15px;font-size:22px}h3{margin:0 0 11px;font-size:17px}
+.warn{padding:13px 15px;border-radius:8px;background:#fff3d8;border-left:4px solid #c98b25;font-size:13px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:17px}.inputs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+label{display:grid;gap:5px;font-size:13px;font-weight:700}input,select,textarea{width:100%;padding:10px 11px;border:1px solid #aabfc5;border-radius:8px;font:inherit;color:#17394a}textarea{min-height:68px}button{background:#136d73;color:#fff;font:inherit;font-weight:750;border:0;border-radius:8px;padding:12px 18px;cursor:pointer;margin:4px 8px 4px 0}.secondary{background:#e8f2f2;color:#144f58}.resultgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}
+.metric{padding:17px;border-radius:9px;background:#eaf3f3}.metric strong{display:block;font-size:24px;overflow-wrap:anywhere}.metric small{color:#527178}
+.note{font-size:12px;color:#677f85}#error{color:#b02d2d;font-weight:700}.report{padding:14px;background:#f3f7f8;border-radius:10px}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#eef5f5;padding:16px;border-radius:10px;font-size:12px}
+@media(max-width:850px){.row,.inputs{grid-template-columns:1fr}.resultgrid{grid-template-columns:1fr}}a{color:#16777c}ul{padding-left:18px}
+</style></head><body>
+<header><span class="kicker">AquaEye · Decision Desk v0.1</span><h1>¿Conviene invertir en esta intervención?</h1>
+<p>Comparación económica de alternativas con rangos, fuentes y evidencia. Diseñado para complementar los sistemas biológicos y productivos de una salmonera.</p></header>
+<main><section><p class="warn"><strong>DEMOSTRACIÓN FICTICIA.</strong> Los valores iniciales son inventados, no corresponden a una salmonera real. No hay pronóstico biológico, conectores, IA generativa ni base de datos. Los cálculos se ejecutan localmente. No ingreses información confidencial.</p>
+<p class="note">No sustituye evaluaciones de bienestar animal, sanidad, regulación ni decisiones profesionales. Compara estimaciones aportadas por el usuario, no descubre por sí mismo beneficios causales.</p></section>
+<section><h2>1. Contexto de la decisión</h2><div class="inputs">
+<label>Moneda<select id="currency"><option>USD</option><option>CLP</option><option>NOK</option><option>EUR</option></select></label>
+<label>Horizonte<select id="horizon"><option>12 meses</option><option>6 meses</option><option>1 ciclo productivo</option></select></label>
+<label>Tipo de decisión<select id="subject"><option>Operación y alimentación</option><option>Sanidad / bienestar</option><option>Planta / rendimiento</option><option>Servicio o proveedor</option></select></label>
+</div><p class="note">Todos los montos corresponden a la misma moneda y el mismo horizonte. Beneficios y costos son incrementales respecto de «no intervenir».</p></section>
+<div class="row"><section class="case" data-i="0"><h2>2. Alternativa A</h2><div class="inputs" style="grid-template-columns:1fr"><label>Intervención<input class="name" value="Ajuste de alimentación (ficticio)" maxlength="160"></label></div><h3>Beneficios incrementales estimados</h3>
+<div class="inputs"><label>Mínimo<input type="number" min="0" step="any" class="bLow" value="10000"></label><label>Base<input type="number" min="0" step="any" class="bBase" value="25000"></label><label>Máximo<input type="number" min="0" step="any" class="bHigh" value="50000"></label></div>
+<h3 style="margin-top:18px">Costo total de intervenir</h3><div class="inputs"><label>Mínimo<input type="number" min="0" step="any" class="cLow" value="9000"></label><label>Base<input type="number" min="0" step="any" class="cBase" value="16000"></label><label>Máximo<input type="number" min="0" step="any" class="cHigh" value="30000"></label></div>
+<label style="margin-top:13px">Fuentes y calidad de evidencia<textarea class="evidence">EJEMPLO FICTICIO: estimaciones no verificadas.</textarea></label>
+<label style="margin-top:13px">Supuestos y condiciones<textarea class="assumptions">Beneficio y costo incrementales referidos a 12 meses; no probado en producción.</textarea></label><h3 style="margin-top:17px">Resultado observado (opcional, al finalizar)</h3><div class="inputs"><label>Beneficio real<input type="number" min="0" step="any" class="actualBenefit" placeholder="Sin medir"></label><label>Costo real<input type="number" min="0" step="any" class="actualCost" placeholder="Sin medir"></label></div><label style="margin-top:12px">Fuente del resultado real<input class="actualSource" placeholder="Acta o reporte, sin datos sensibles" maxlength="300"></label></section>
+<section class="case" data-i="1"><h2>3. Alternativa B</h2><div class="inputs" style="grid-template-columns:1fr"><label>Intervención<input class="name" value="Servicio externo (ficticio)" maxlength="160"></label></div><h3>Beneficios incrementales estimados</h3>
+<div class="inputs"><label>Mínimo<input type="number" min="0" step="any" class="bLow" value="2000"></label><label>Base<input type="number" min="0" step="any" class="bBase" value="28000"></label><label>Máximo<input type="number" min="0" step="any" class="bHigh" value="65000"></label></div>
+<h3 style="margin-top:18px">Costo total de intervenir</h3><div class="inputs"><label>Mínimo<input type="number" min="0" step="any" class="cLow" value="11000"></label><label>Base<input type="number" min="0" step="any" class="cBase" value="23000"></label><label>Máximo<input type="number" min="0" step="any" class="cHigh" value="38000"></label></div>
+<label style="margin-top:13px">Fuentes y calidad de evidencia<textarea class="evidence">EJEMPLO FICTICIO: oferta simulada, no una cotización real.</textarea></label>
+<label style="margin-top:13px">Supuestos y condiciones<textarea class="assumptions">No existe evaluación sanitaria ni estimación del impacto animal.</textarea></label><h3 style="margin-top:17px">Resultado observado (opcional, al finalizar)</h3><div class="inputs"><label>Beneficio real<input type="number" min="0" step="any" class="actualBenefit" placeholder="Sin medir"></label><label>Costo real<input type="number" min="0" step="any" class="actualCost" placeholder="Sin medir"></label></div><label style="margin-top:12px">Fuente del resultado real<input class="actualSource" placeholder="Acta o reporte, sin datos sensibles" maxlength="300"></label></section></div>
+<section><button id="evaluate">Comparar alternativas</button><button id="csv" class="secondary">Exportar comparación CSV</button><button id="report" class="secondary">Descargar ficha de decisión TXT</button>
+<p id="error" role="alert"></p></section>
+<section><h2>4. Resultados: rangos, no predicciones</h2><div id="results" class="row"></div><p class="note">El escenario conservador usa beneficio mínimo menos costo máximo. El escenario optimista usa beneficio máximo menos costo mínimo. No son percentiles ni probabilidades.</p></section>
+<section><h2>5. Ficha para el comité de decisión</h2><pre id="memo"></pre><p class="note">La decisión final requiere evaluación operacional y sanitaria; esta herramienta no recomienda ni ejecuta automáticamente intervenciones.</p></section>
+</main>
+<script type="module">
+import {compareDecisions,exportDecisionCSV} from "./model.js";
+const $$=(sel,scope=document)=>scope.querySelector(sel),all=sel=>[...document.querySelectorAll(sel)];
+let current=null;
+const output=$$("#results"),memo=$$("#memo"),error=$$("#error");
+function money(x,currency){return new Intl.NumberFormat("es-CL",{style:"currency",currency,maximumFractionDigits:0}).format(x)}
+function item(el){
+ const get=(c)=>$$("#"+c,el);
+ const value=(c)=>{const field=$$("."+c,el);if(field.value.trim()==="")throw new Error("Completa todos los montos");return Number(field.value)};
+ const b=$(".actualBenefit",el).value.trim(),c=$(".actualCost",el).value.trim(),source=$(".actualSource",el).value.trim();
+ if((b||c||source)&&(!b||!c||!source))throw new Error("Para registrar resultados observados se requieren beneficio, costo y fuente.");
+ return {name:$(".name",el).value,horizon:$("#horizon").value,currency:$("#currency").value,
+ benefits:{low:value("bLow"),base:value("bBase"),high:value("bHigh")},
+ costs:{low:value("cLow"),base:value("cBase"),high:value("cHigh")},
+ evidence:$(".evidence",el).value,assumptions:$(".assumptions",el).value,
+ actual:b?{benefit:Number(b),cost:Number(c),source}:undefined};
+}
+function render(){
+ try{
+  current=compareDecisions(all(".case").map(item));error.textContent="";output.replaceChildren();
+  const details=[];
+  for(const d of current.decisions){
+   const c=document.createElement("div");c.className="report";
+   const h=document.createElement("h3");h.textContent=d.name;c.append(h);
+   const metrics=document.createElement("div");metrics.className="resultgrid";
+   for(const [label,n] of [["Conservador",d.net.conservative],["Base",d.net.base],["Optimista",d.net.optimistic]]){
+    const box=document.createElement("div");box.className="metric";
+    const strong=document.createElement("strong");strong.textContent=money(n,d.currency);
+    const small=document.createElement("small");small.textContent=label;box.append(strong,small);metrics.append(box);
+   }
+   c.append(metrics);if(d.outcome){const observed=document.createElement("p");observed.textContent="Neto observado: "+money(d.outcome.net,d.currency)+" · desviación descriptiva frente al escenario base: "+money(d.outcome.varianceVsBase,d.currency);c.append(observed)}const p=document.createElement("p");p.textContent="Lectura: "+d.classification.replaceAll("_"," ").toLowerCase()+". Beneficio necesario para cubrir costo base: "+money(d.breakEvenBenefit,d.currency);c.append(p);output.append(c);
+   details.push(d.name+" | Fuente: "+(d.evidence||"NO INFORMADA")+"\nSupuestos: "+(d.assumptions||"NO INFORMADOS")+
+   "\nNeto conservador / base / optimista: "+[d.net.conservative,d.net.base,d.net.optimistic].map(v=>money(v,d.currency)).join(" / ")+"\n");
+  }
+  memo.textContent="AQUAEYE — FICHA DE DECISIÓN DEMOSTRATIVA\nMoneda: "+current.currency+"\nHorizonte: "+current.horizon+
+   "\nTema: "+$$("#subject").value+"\n\n"+details.join("\n")+
+   "\nREVISAR antes de decidir: procedencia de estimaciones, sensibilidad, normas vigentes, bienestar animal y factibilidad de implementación.\n"+
+   current.disclaimer+"\n"+current.decisions[0].caveat;
+ }catch(e){error.textContent=e.message;current=null;output.replaceChildren();memo.textContent="Corrige las entradas para generar la ficha."}
+}
+function download(text,name,mime){const url=URL.createObjectURL(new Blob([text],{type:mime}));const a=document.createElement("a");a.href=url;a.download=name;a.click();URL.revokeObjectURL(url)}
+$$("#evaluate").addEventListener("click",render);
+$$("#csv").addEventListener("click",()=>{render();if(current)download(exportDecisionCSV(current),"aquaeye_escenarios_DEMO.csv","text/csv;charset=utf-8")});
+$$("#report").addEventListener("click",()=>{render();if(current)download(memo.textContent,"aquaeye_ficha_DECISION_DEMO.txt","text/plain;charset=utf-8")});
+render();
+</script></body></html>
