@@ -49,12 +49,12 @@ function money(x,currency){return new Intl.NumberFormat("es-CL",{style:"currency
 function item(el){
  const get=(c)=>$$("#"+c,el);
  const value=(c)=>{const field=$$("."+c,el);if(field.value.trim()==="")throw new Error("Completa todos los montos");return Number(field.value)};
- const b=$(".actualBenefit",el).value.trim(),c=$(".actualCost",el).value.trim(),source=$(".actualSource",el).value.trim();
+ const b=$$(".actualBenefit",el).value.trim(),c=$$(".actualCost",el).value.trim(),source=$$(".actualSource",el).value.trim();
  if((b||c||source)&&(!b||!c||!source))throw new Error("Para registrar resultados observados se requieren beneficio, costo y fuente.");
- return {name:$(".name",el).value,horizon:$("#horizon").value,currency:$("#currency").value,
+ return {name:$$(".name",el).value,horizon:$$("#horizon").value,currency:$$("#currency").value,
  benefits:{low:value("bLow"),base:value("bBase"),high:value("bHigh")},
  costs:{low:value("cLow"),base:value("cBase"),high:value("cHigh")},
- evidence:$(".evidence",el).value,assumptions:$(".assumptions",el).value,
+ evidence:$$(".evidence",el).value,assumptions:$$(".assumptions",el).value,
  actual:b?{benefit:Number(b),cost:Number(c),source}:undefined};
 }
 function render(){
@@ -86,23 +86,23 @@ $$("#csv").addEventListener("click",()=>{render();if(current)download(exportDeci
 $$("#report").addEventListener("click",()=>{render();if(current)download(memo.textContent,"aquaeye_ficha_DECISION_DEMO.txt","text/plain;charset=utf-8")});
 
 function fillCard(card,decision){
- const put=(cls,val)=>{const el=$("."+cls,card);if(!el)throw Error("Falta campo "+cls);el.value=val};
+ const put=(cls,val)=>{const el=$$("."+cls,card);if(!el)throw Error("Falta campo "+cls);el.value=val};
  put("name",decision.name);put("bLow",decision.benefits.low);put("bBase",decision.benefits.base);put("bHigh",decision.benefits.high);
  put("cLow",decision.costs.low);put("cBase",decision.costs.base);put("cHigh",decision.costs.high);
  put("evidence",decision.evidence);put("assumptions",decision.assumptions);
  put("actualBenefit","");put("actualCost","");put("actualSource","");
 }
-$("#template").addEventListener("click",()=>download(decisionTemplateCSV(),"aquaeye_plantilla_DEMO.csv","text/csv;charset=utf-8"));
-$("#csvfile").addEventListener("change",async e=>{
+$$("#template").addEventListener("click",()=>download(decisionTemplateCSV(),"aquaeye_plantilla_DEMO.csv","text/csv;charset=utf-8"));
+$$("#csvfile").addEventListener("change",async e=>{
  const file=e.target.files?.[0];if(!file)return;
  try{
   if(file.size>100000)throw Error("El archivo supera 100 KB");
   const imported=importDecisionCSV(await file.text());
   if(imported.decisions.length!==2)throw Error("Esta pantalla requiere exactamente dos alternativas");
   // Everything is validated BEFORE touching the current form.
-  $("#currency").value=imported.currency;
-  if(![...$("#horizon").options].some(o=>o.value===imported.horizon))throw Error("Horizonte no soportado en pantalla");
-  $("#horizon").value=imported.horizon;
+  $$("#currency").value=imported.currency;
+  if(![...$$("#horizon").options].some(o=>o.value===imported.horizon))throw Error("Horizonte no soportado en pantalla");
+  $$("#horizon").value=imported.horizon;
   all(".case").forEach((card,i)=>fillCard(card,imported.decisions[i]));
   render();
  }catch(ex){error.textContent="CSV rechazado: "+ex.message}
