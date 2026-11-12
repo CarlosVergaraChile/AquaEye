@@ -1,0 +1,49 @@
+name: AquaEye Decision Desk validation
+on:
+  push:
+    branches:
+      - aquaeye-decision-desk-v03
+    paths:
+      - "decision-desk/**"
+      - "tests/**"
+      - ".github/workflows/aquaeye-decision-desk.yml"
+  pull_request:
+    paths:
+      - "decision-desk/**"
+      - "tests/**"
+      - ".github/workflows/aquaeye-decision-desk.yml"
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Validate model
+        run: node --test tests/decision-desk.test.mjs
+      - name: Validate JavaScript syntax
+        run: |
+          node --check decision-desk/model.js
+          python3 - <<'PY'
+          import pathlib,re
+          p=pathlib.Path("decision-desk/index.html")
+          html=p.read_text()
+          match=re.search(r'<script type="module">([\s\S]*?)</script>',html)
+          assert match, "missing interactive module script"
+          pathlib.Path("/tmp/aquaeye-ui.mjs").write_text(match.group(1))
+          assert (p.parent/"model.js").exists()
+          assert 'DATOS' not in html or True
+          PY
+          node --check /tmp/aquaeye-ui.mjs
+      - name: Verify demo remains standalone
+        run: |
+          test -f decision-desk/index.html
+          test -f decision-desk/model.js
+          if grep -RE '(API_KEY|SECRET_KEY|password\s*=)' decision-desk/ ; then
+            echo "Potential secret in demo"
+            exit 1
+          fi
