@@ -70,3 +70,19 @@ Usuario: gerente de producción + finanzas + control de gestión; comprador pote
 - El repo AquaEye **es público**, incluso las ramas de desarrollo: NO cargar modelos calibrados, recetas comerciales ni datos de salmoneras aquí.
 - No desplegar esta prueba para clientes con información real sin autenticación, segregación, auditabilidad y revisión de seguridad.
 - No confundir FAO **AquaCrop** (simulador de *cultivos agrícolas*) con acuicultura: no es una plataforma aplicable a salmoneras.
+
+
+## Auditoría de repositorios abiertos (GitHub API, 12/11/2026)
+Antes de implementar se buscaron repositorios reutilizables con licencia clara, actividad y métricas de comunidad. **No hay un estándar abierto dominante de gestión comercial de salmoneras comparable a Fishtalk/Mercatus.** Se revisaron:
+
+| Repo | Stars/forks | Licencia API | Dictamen |
+|---|---:|---|---|
+| [farmOS/farmOS](https://github.com/farmOS/farmOS) | 1.389 / 372 | GPL-2.0 | Madurez y comunidad; orientado a agricultura/ganadería, no copiar stack para salmonera. Aprender patrones de registros, permisos y trazabilidad. |
+| [ekylibre/ekylibre](https://github.com/ekylibre/ekylibre) | 496 / 175 | AGPL-3.0 | Farm ERP agro; interesante diseño de operaciones y costos, obligaciones copyleft/revisión legal. |
+| [Drwae/AquaSustain-Bench](https://github.com/Drwae/AquaSustain-Bench) | 1 / 0 | NOASSERTION | Benchmark investigación: especies no salmoneras, datos públicos de ejemplo sintéticos. **No base de producción ni fuente de calibración**. |
+| [pragalbhdwivedi/aquapulse](https://github.com/pragalbhdwivedi/aquapulse) | 2 / 0 | No verificable por API | Prototipo de cultivo en estanques, README declara código de uso interno propietario pese a ser repositorio visible. **No copiar**. |
+| [razinkele/instream-py](https://github.com/razinkele/instream-py) | 0 / 0 | GPL-3.0 | Modelo académico de salmonídeos silvestres; no apropiado como motor industrial de salmonicultura. |
+| [Kaziaa/aquaculture-data-platform](https://github.com/Kaziaa/aquaculture-data-platform) | 0 / 0 | No determinada | ETL/datos noruegos en desarrollo; observar fuentes y pruebas, no integrar código sin validación/licencia. |
+| [ATSpuler/AquacultureML](https://github.com/ATSpuler/AquacultureML) | 0 / 0 | No determinada | Demostración tecnológica de oxígeno, sin base independiente de madurez/seguridad certificada. |
+
+**Resultado de selección:** para MVP v0.1, usar código nuestro **aritmético, simple y probado** es mejor que importar una plataforma grande agro o un prototipo de acuicultura sin licencia verificable. Reconsiderar repos abiertos (p.ej. CSV, visualización, autenticación) cuando tengamos un requisito real de integración. No reinventar herramientas básicas que ya funcionan. No atribuir novedad a la aritmética ni a la exportación.
