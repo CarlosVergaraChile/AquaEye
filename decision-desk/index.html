@@ -34,13 +34,14 @@ pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#eef5f5;padding:16px;
 <h3 style="margin-top:18px">Costo total de intervenir</h3><div class="inputs"><label>Mínimo<input type="number" min="0" step="any" class="cLow" value="11000"></label><label>Base<input type="number" min="0" step="any" class="cBase" value="23000"></label><label>Máximo<input type="number" min="0" step="any" class="cHigh" value="38000"></label></div>
 <label style="margin-top:13px">Fuentes y calidad de evidencia<textarea class="evidence">EJEMPLO FICTICIO: oferta simulada, no una cotización real.</textarea></label>
 <label style="margin-top:13px">Supuestos y condiciones<textarea class="assumptions">No existe evaluación sanitaria ni estimación del impacto animal.</textarea></label><h3 style="margin-top:17px">Resultado observado (opcional, al finalizar)</h3><div class="inputs"><label>Beneficio real<input type="number" min="0" step="any" class="actualBenefit" placeholder="Sin medir"></label><label>Costo real<input type="number" min="0" step="any" class="actualCost" placeholder="Sin medir"></label></div><label style="margin-top:12px">Fuente del resultado real<input class="actualSource" placeholder="Acta o reporte, sin datos sensibles" maxlength="300"></label></section></div>
-<section><button id="evaluate">Comparar alternativas</button><button id="csv" class="secondary">Exportar comparación CSV</button><button id="report" class="secondary">Descargar ficha de decisión TXT</button>
+<section><h2>Importación rápida desde planilla</h2><p class="note">Descarga la plantilla, modifica sus montos ficticios y vuelve a importar el CSV. Un solo tipo de moneda, un horizonte y dos alternativas. Nunca uses cifras confidenciales en una demo pública.</p><button id="template" class="secondary">Descargar plantilla CSV</button><label style="display:inline-block;font-weight:600;margin:0 12px">Importar CSV de dos alternativas<input id="csvfile" type="file" accept=".csv,text/csv" style="max-width:230px"></label><hr style="border:0;border-top:1px solid #dbe7e7;margin:18px 0"><button id="evaluate">Comparar alternativas</button><button id="csv" class="secondary">Exportar comparación CSV</button><button id="report" class="secondary">Descargar ficha de decisión TXT</button>
 <p id="error" role="alert"></p></section>
 <section><h2>4. Resultados: rangos, no predicciones</h2><div id="results" class="row"></div><p class="note">El escenario conservador usa beneficio mínimo menos costo máximo. El escenario optimista usa beneficio máximo menos costo mínimo. No son percentiles ni probabilidades.</p></section>
 <section><h2>5. Ficha para el comité de decisión</h2><pre id="memo"></pre><p class="note">La decisión final requiere evaluación operacional y sanitaria; esta herramienta no recomienda ni ejecuta automáticamente intervenciones.</p></section>
 </main>
 <script type="module">
 import {compareDecisions,exportDecisionCSV} from "./model.js";
+import {importDecisionCSV,decisionTemplateCSV} from "./import-csv.js";
 const $$=(sel,scope=document)=>scope.querySelector(sel),all=sel=>[...document.querySelectorAll(sel)];
 let current=null;
 const output=$$("#results"),memo=$$("#memo"),error=$$("#error");
@@ -48,12 +49,12 @@ function money(x,currency){return new Intl.NumberFormat("es-CL",{style:"currency
 function item(el){
  const get=(c)=>$$("#"+c,el);
  const value=(c)=>{const field=$$("."+c,el);if(field.value.trim()==="")throw new Error("Completa todos los montos");return Number(field.value)};
- const b=$(".actualBenefit",el).value.trim(),c=$(".actualCost",el).value.trim(),source=$(".actualSource",el).value.trim();
+ const b=$$(".actualBenefit",el).value.trim(),c=$$(".actualCost",el).value.trim(),source=$$(".actualSource",el).value.trim();
  if((b||c||source)&&(!b||!c||!source))throw new Error("Para registrar resultados observados se requieren beneficio, costo y fuente.");
- return {name:$(".name",el).value,horizon:$("#horizon").value,currency:$("#currency").value,
+ return {name:$$(".name",el).value,horizon:$$("#horizon").value,currency:$$("#currency").value,
  benefits:{low:value("bLow"),base:value("bBase"),high:value("bHigh")},
  costs:{low:value("cLow"),base:value("cBase"),high:value("cHigh")},
- evidence:$(".evidence",el).value,assumptions:$(".assumptions",el).value,
+ evidence:$$(".evidence",el).value,assumptions:$$(".assumptions",el).value,
  actual:b?{benefit:Number(b),cost:Number(c),source}:undefined};
 }
 function render(){
@@ -83,5 +84,29 @@ function download(text,name,mime){const url=URL.createObjectURL(new Blob([text],
 $$("#evaluate").addEventListener("click",render);
 $$("#csv").addEventListener("click",()=>{render();if(current)download(exportDecisionCSV(current),"aquaeye_escenarios_DEMO.csv","text/csv;charset=utf-8")});
 $$("#report").addEventListener("click",()=>{render();if(current)download(memo.textContent,"aquaeye_ficha_DECISION_DEMO.txt","text/plain;charset=utf-8")});
+
+function fillCard(card,decision){
+ const put=(cls,val)=>{const el=$$("."+cls,card);if(!el)throw Error("Falta campo "+cls);el.value=val};
+ put("name",decision.name);put("bLow",decision.benefits.low);put("bBase",decision.benefits.base);put("bHigh",decision.benefits.high);
+ put("cLow",decision.costs.low);put("cBase",decision.costs.base);put("cHigh",decision.costs.high);
+ put("evidence",decision.evidence);put("assumptions",decision.assumptions);
+ put("actualBenefit","");put("actualCost","");put("actualSource","");
+}
+$$("#template").addEventListener("click",()=>download(decisionTemplateCSV(),"aquaeye_plantilla_DEMO.csv","text/csv;charset=utf-8"));
+$$("#csvfile").addEventListener("change",async e=>{
+ const file=e.target.files?.[0];if(!file)return;
+ try{
+  if(file.size>100000)throw Error("El archivo supera 100 KB");
+  const imported=importDecisionCSV(await file.text());
+  if(imported.decisions.length!==2)throw Error("Esta pantalla requiere exactamente dos alternativas");
+  // Everything is validated BEFORE touching the current form.
+  $$("#currency").value=imported.currency;
+  if(![...$$("#horizon").options].some(o=>o.value===imported.horizon))throw Error("Horizonte no soportado en pantalla");
+  $$("#horizon").value=imported.horizon;
+  all(".case").forEach((card,i)=>fillCard(card,imported.decisions[i]));
+  render();
+ }catch(ex){error.textContent="CSV rechazado: "+ex.message}
+ finally{e.target.value=""}
+});
 render();
 </script></body></html>
