@@ -62,7 +62,7 @@ function csvSafe(value){
  return '"'+safe.replaceAll('"','""')+'"';
 }
 export function decisionTemplateCSV(){
- return "\uFEFF"+[HEADERS.join(";"),
+ return "\uFEFF"+[HEADERS,
   ["Intervención A (EJEMPLO)","USD","12 meses","10000","25000","50000","9000","16000","30000","FICTICIO sin fuente real","Montos inventados para DEMO"],
   ["Intervención B (EJEMPLO)","USD","12 meses","2000","28000","65000","11000","23000","38000","FICTICIO sin fuente real","Montos inventados para DEMO"]
  ].map(r=>r.map(csvSafe).join(";")).join("\r\n");
