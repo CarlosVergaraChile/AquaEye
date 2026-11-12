@@ -41,6 +41,15 @@ jobs:
           assert (p.parent/"import-csv.js").exists()
           PY
           node --check /tmp/aquaeye-ui.mjs
+      - name: Install headless browser for end-to-end UI smoke
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+      - name: Test actual UI with browser
+        run: |
+          python3 -m http.server 8128 --bind 127.0.0.1 > /tmp/aquaeye-http.log 2>&1 &
+          sleep 2
+          node tests/browser-smoke.mjs
       - name: Verify demo remains standalone
         run: |
           test -f decision-desk/index.html
